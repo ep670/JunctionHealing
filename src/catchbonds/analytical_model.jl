@@ -12,13 +12,6 @@ function dn_dt_catch(n_ratio, p,t)
     return (f1 .- f2)
 end
 
-function dn_dt_catch_separate(n_ratio, p,t)
-    f1 = (p.k_on_0) .* (1 .-n_ratio)
-    f2s = exp.(p.Gamma(t).s ./(n_ratio .* p.f_1s)) .* p.k_off_s
-    f2c = exp.(-p.Gamma(t).s ./(n_ratio .* p.f_1c)) .* p.k_off_c
-    f2 = (f2s .+ f2c) .* n_ratio
-    return f1, f2
-end
 
 function solve_dn_dt_catch(n_ratio, k_on_0, k_off_s, f_1s, k_off_c, f_1c, Gamma, duration, dt=0.01, verbose=false)
     p = (k_on_0 = k_on_0, k_off_s= k_off_s, f_1s=f_1s, k_off_c= k_off_c, f_1c=f_1c, Gamma=Gamma)
@@ -106,72 +99,3 @@ function get_recovery_time_catch(gamma_low, k_on_0, k_off_s, f_1s, k_off_c, f_1c
     return mean_time_to_recovery
 end
 
-
-
-
-# ###################### debugging plots #########################
-
-# using Plots
-# function constant_loading(amp)
-#     return t -> (s=amp, sdot=0)
-# end
-
-
-# n_init = 0.5;
-
-# k_on_0 = 3.47e-4
-# k_off_s = 2.68e-4 
-# f_1s = 2.49e-1
-# k_off_c = k_off_s * 2
-# f_1c = f_1s *0.1
-# # need k_off_c/f_1c > k_off_s/f_1s for catch bond behaviour
-# # with k_off c > k_off s, f_1c >~ f_1s
-# duration = 10000.0
-
-# sol = solve_dn_dt_catch(n_init, k_on_0, k_off_s, f_1s, k_off_c, f_1c, constant_loading(0.06), duration, 0.01, true)
-
-# plot(sol.t, sol.n_ratio, xlabel="Time", ylabel="Bond Ratio", title="Catch Bond Dynamics under Constant Loading", ylim=(0,1))
-
-# # find Equilibrium n for constant loading Range
-# tension = 0.0:0.005:0.15
-# n_eqs = Float64[]
-# for t in tension
-#     sol_eq = solve_dn_dt_catch(n_init, k_on_0, k_off_s, f_1s, k_off_c, f_1c, constant_loading(t), 10000.0, 0.01, true)
-#     t, n_ratio = sol_eq.t[end], sol_eq.n_ratio[end]
-#     n_eq = t < duration ? 0.0 : n_ratio
-#     # if sol_eq.t[end] < 10000.0
-#     #     @warn "Solution did not reach full duration"
-#     # end
-#     push!(n_eqs, n_eq)
-# end
-# plot(tension, n_eqs, xlabel="Tension", ylabel="Equilibrium Bond Ratio", title="Equilibrium Bond Ratio vs Tension")
-
-
-# # Plot kon(n) and koff(n)
-# n_ratio = 0:0.01:1
-# tension = 0.01
-# Gamma = constant_loading(tension)
-# p = (k_on_0 = k_on_0, k_off_s= k_off_s, f_1s=f_1s, k_off_c= k_off_c, f_1c=f_1c, Gamma=Gamma)
-# f1_results=[]
-# f2_results=[]
-
-# for n in n_ratio
-#     f1,f2 = dn_dt_catch_separate(n, p,0.)
-#     push!(f1_results,f1)
-#     push!(f2_results,f2)
-# end
-
-# plot(n_ratio,f1_results, label="k_on")
-# plot!(n_ratio,f2_results, xlabel="Bond ratio", ylabel="dn/dt", ylims=(0,0.001), title= "Tension @ $tension", label="k_off")
-
-    
-
-
-
-
-# ft = get_fracture_time_catch.(0.0:0.001:0.1, k_on_0, k_off_s, f_1s, k_off_c, f_1c, 10000.0, nothing, true)
-# plot(0.0:0.001:0.1, ft, xlabel="Gamma_high", ylabel="Fracture Time", title="Fracture Time vs Loading Level for Catch Bonds")
-
-
-# ht = get_recovery_time_catch.(0.00:0.01:0.5, k_on_0, k_off_s, f_1s, k_off_c, f_1c, 20000.0, false, 0.01)
-# plot(0.00:0.01:0.5, ht, xlabel="Gamma_low", ylabel="Recovery Time", title="Recovery Time vs Unloading Level for Catch Bonds")
