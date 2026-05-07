@@ -50,9 +50,6 @@ function get_fracture_time(gamma_high, k_on_0, k_off_0, f_1e, duration, gamma_lo
     # suppress warnings/console output from solve_dn_dt
     sol_creep = @suppress solve_dn_dt(n_init, k_on_0, k_off_0, f_1e, loading_creep, duration)
     fracture_time = find_fracture(sol_creep)
-    if fracture_time >= duration
-        @warn "analytical simulation did not fracture. Consider increasing duration or changing gamma_high/gamma_low"
-    end
     return fracture_time
 end
 

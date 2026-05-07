@@ -302,9 +302,11 @@ function get_recovery_time_stochastic(gamma_low, k_on_0, k_off_0, f_1e, duration
     # check if there are any simulations that recovered
     if pct_recovery == 0.
         println("No simulations recovered")        
-        return NaN
-    # elseif pct_recovery < 100
-    #     println("Warning: All simulations did not recover, only $pct_recovery %")
+        if return_bond_info == true
+            return NaN, 0., bond_memories
+        else
+            return NaN
+        end
     end
     
     # find mean signal of recovered simulations
@@ -334,35 +336,4 @@ function get_recovery_time_stochastic(gamma_low, k_on_0, k_off_0, f_1e, duration
     else
         return recovery_time
     end
-
-    # t = range(0, stop=duration, length=n_timesteps+1)
-    # recoveries = - bond_memories[idx_recovered,:] .+ n_stable*n
-    # recoveries = recoveries ./ recoveries[1, 1]  # normalize the recovery curve
-
-    # timescales = zeros(size(recoveries, 1))
-    # for i in 1:size(recoveries, 1)
-    #     if idx_recovered[i]
-    #         # println("pct done: $(100*i/size(recoveries, 1))")
-    #         if length(recoveries[i,:]) > 1
-    #             model_for_fit(x, p) = exp.(-p[1] .* x)
-    #             fit = LsqFit.curve_fit(model_for_fit, t, recoveries[i,:], [0.001])
-    #             timescales[i] = 1 / fit.param[1]
-    #             if timescales[i] < 0
-    #                 timescales[i] = duration
-    #             end
-    #         else
-    #             println("Recovery curve is too short to fit an exponential decay")
-    #         end
-    #     else
-    #         timescales[i] = duration
-    #     end
-    # end
-    
-    # recovery_time = mean(timescales)
-
-    # if return_bond_info == true
-    #     return recovery_time, timescales, pct_recovery, bond_memories
-    # else
-    #     return recovery_time
-    # end
 end
