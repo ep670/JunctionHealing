@@ -2,6 +2,7 @@
 
 This repository contains the code and computational models used in the manuscript **“[Emergent Tissue Stability from Intercellular Bond Dynamics during Cyclic Mechanical Loading](https://doi.org/10.1016/j.bpj.2026.06.038)”** (Papafilippou *et al.*, 2026). It provides scripts for setting up dependencies, running simulations, and reproducing all results presented.
 
+[![DOI](https://zenodo.org/badge/1114612330.svg)](https://doi.org/10.5281/zenodo.21777729)
 
 ## Contents
 
